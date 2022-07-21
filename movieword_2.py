@@ -1,7 +1,9 @@
+import os
 from tkinter import *
 from tkinter import ttk
 import tkinter as tk
 import openpyxl
+import re
 from openpyxl import load_workbook
 
 win = tk.Tk()
@@ -17,6 +19,12 @@ addEword = tk.StringVar()
 addCword = tk.StringVar()
 warnword = tk.StringVar()
 SheetName = tk.StringVar()
+filepath = tk.StringVar()
+filename = os.path.abspath("moviewo.xlsx")
+
+if not os.path.exists(filename):
+    newcreate = openpyxl.Workbook()
+    newcreate.save('moviewo.xlsx')
 workbook = openpyxl.load_workbook('moviewo.xlsx')
 count=len(workbook.sheetnames)
 
@@ -54,16 +62,38 @@ def addword():
     addEwordString = addEword.get()
     addCwordString = addCword.get()
     sheetneedCreate = 1
+    entryfinish = 0
     entryerror = 0
     wb = load_workbook('moviewo.xlsx')
     count=len(wb.sheetnames)
 
     if (WorksheetNameString == "") or (addEwordString == "") or (addCwordString == ""):
+        entryfinish = 1
+
+    WorksheetNameCheck = re.compile(r'^\s|\s$')  #開頭與結尾不能有空格
+    WorksheetNameJudge = WorksheetNameCheck.search(WorksheetNameString)
+    addEwordCheck = re.compile(r'[^a-z]|[^A-Z] | ^\s|\s$')  #開頭與結尾不能有空格或不能有非英文
+    addEwordJudge = addEwordCheck.search(addEwordString)
+    addCwordCheck = re.compile(r'^\s|\s$')   #開頭與結尾不能有空格
+    addCwordJudge = addCwordCheck.search(addCwordString)
+
+    if (WorksheetNameJudge != None) or (addCwordJudge != None) or (addEwordJudge != None):
         entryerror = 1
         label8.config(fg="red")
-        warnword.set("輸入不完整!請重新輸入")
+        warnword.set("輸入格式錯誤!")
 
-    if entryerror == 0:
+    if (entryerror == 1) or (entryfinish == 1):
+        if (entryerror == 1) and (entryfinish == 0):
+            label8.config(fg="red")
+            warnword.set("輸入格式錯誤!")
+        if (entryerror == 0) and (entryfinish == 1):
+            label8.config(fg="red")
+            warnword.set("輸入不完整!")
+        if (entryerror == 1) and (entryfinish == 1):
+            label8.config(fg="red")
+            warnword.set("輸入不完整與輸入格式錯誤!")
+
+    if (entryfinish == 0) and (entryerror == 0):
         for i in range(0,count):
             if WorksheetNameString == wb.sheetnames[i]:
                 sheetneedCreate = 0
@@ -90,8 +120,12 @@ def renewsheetname():
     workbook = openpyxl.load_workbook('moviewo.xlsx')
     count=len(workbook.sheetnames)
     for i in range(0, count):
-        SheetNameString = SheetNameString + "," + workbook.sheetnames[i]
-    
+        if i == 0:
+            SheetNameString = workbook.sheetnames[i]
+        else:    
+            SheetNameString = SheetNameString + "," + workbook.sheetnames[i]
+        if (i!=0) and (i % 10) == 0:
+            SheetNameString = SheetNameString + "\n"   #每 10 個換行
     SheetName.set(SheetNameString)
 
 
@@ -115,8 +149,10 @@ entry3 = tk.Entry(tab1, textvariable=addEword, font=("微軟正黑體", 18))
 label7 = tk.Label(tab1, text="中文意思：", font=("微軟正黑體", 18))
 entry4 = tk.Entry(tab1, textvariable=addCword, font=("微軟正黑體", 18))
 labelNone3 = tk.Label(tab1, text="")
-button2 = tk.Button(tab1, text="增加至單字庫", font=("微軟正黑體", 18), fg="blue", command=addword)
+button2 = tk.Button(tab1, text="增加至單字庫", font=("微軟正黑體", 18, "bold"), bg="CadetBlue1", fg="black", command=addword)
 label8 = tk.Label(tab1, textvariable=warnword, font=("微軟正黑體", 14))
+label10 = tk.Label(tab1, textvariable=filepath, font=("微軟正黑體", 12))
+filepath.set("目前讀取檔案路徑：" + filename)
 
 labelNone4.grid(row=0, column=0)
 label5.grid(row=1, column=0, sticky="e")
@@ -128,6 +164,7 @@ entry4.grid(row=3, column=1)
 labelNone3.grid(row=4, column=0)
 button2.grid(row=5, column=1, sticky="w")
 label8.place(x=190, y=210)
+label10.place(x=50, y=250)
 
 #-------------------------分頁 2---------------------------
 
@@ -136,7 +173,7 @@ frame1.pack()
 label1 = tk.Label(frame1, text="想查詢的單字：", font=("微軟正黑體", 18))
 entry = tk.Entry(frame1, textvariable=Ewordbefore, font=("微軟正黑體", 18))
 labelNone1 = tk.Label(frame1, text=" ", font=("微軟正黑體", 18))
-button1 = tk.Button(frame1, text="查詢", font=("微軟正黑體", 18), fg="blue", command=searchEword)
+button1 = tk.Button(frame1, text="查詢", font=("微軟正黑體", 18, "bold"), bg="yellow", fg="blue", command=searchEword)
 label1.grid(row=0, column=0)
 entry.grid(row=0, column=1)
 labelNone1.grid(row=0, column=2)
