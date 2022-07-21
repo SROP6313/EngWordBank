@@ -20,16 +20,16 @@ addCword = tk.StringVar()
 warnword = tk.StringVar()
 SheetName = tk.StringVar()
 filepath = tk.StringVar()
-filename = os.path.abspath("moviewo.xlsx")
+filename = os.path.abspath("wordbank.xlsx")
 
 if not os.path.exists(filename):
     newcreate = openpyxl.Workbook()
-    newcreate.save('moviewo.xlsx')
-workbook = openpyxl.load_workbook('moviewo.xlsx')
+    newcreate.save('wordbank.xlsx')
+workbook = openpyxl.load_workbook('wordbank.xlsx')
 count=len(workbook.sheetnames)
 
 def searchEword():
-    workbook = openpyxl.load_workbook('moviewo.xlsx')
+    workbook = openpyxl.load_workbook('wordbank.xlsx')
     count=len(workbook.sheetnames)
     EwordafterString = ""
     CwordafterString = ""
@@ -64,7 +64,7 @@ def addword():
     sheetneedCreate = 1
     entryfinish = 0
     entryerror = 0
-    wb = load_workbook('moviewo.xlsx')
+    wb = load_workbook('wordbank.xlsx')
     count=len(wb.sheetnames)
 
     if (WorksheetNameString == "") or (addEwordString == "") or (addCwordString == ""):
@@ -112,12 +112,12 @@ def addword():
             warnword.set("已創建新的工作表，單字儲存成功!")
         
         count=len(wb.sheetnames)
-        wb.save('moviewo.xlsx')
+        wb.save('wordbank.xlsx')
         wb.close()
 
 def renewsheetname():
     SheetNameString =""
-    workbook = openpyxl.load_workbook('moviewo.xlsx')
+    workbook = openpyxl.load_workbook('wordbank.xlsx')
     count=len(workbook.sheetnames)
     for i in range(0, count):
         if i == 0:
