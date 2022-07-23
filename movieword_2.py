@@ -72,7 +72,7 @@ def addword():
 
     WorksheetNameCheck = re.compile(r'^\s|\s$')  #開頭與結尾不能有空格
     WorksheetNameJudge = WorksheetNameCheck.search(WorksheetNameString)
-    addEwordCheck = re.compile(r'[^a-z]|[^A-Z] | ^\s|\s$')  #開頭與結尾不能有空格或不能有非英文
+    addEwordCheck = re.compile(r'[^a-zA-Z\s]|\s$|^\s')  #開頭與結尾不能有空格或不能有非英文
     addEwordJudge = addEwordCheck.search(addEwordString)
     addCwordCheck = re.compile(r'^\s|\s$')   #開頭與結尾不能有空格
     addCwordJudge = addCwordCheck.search(addCwordString)
